@@ -1,5 +1,5 @@
 import { useAuth } from '../hooks/useAuth';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useGeo } from '../hooks/useGeo';
 import {
   Button,
@@ -22,6 +22,19 @@ export default function Home() {
 
   const { data, isLoading, isError } = useGeo(currentIP);
 
+    const formattedGeo = useMemo(() => {
+    if (!data) return null;
+    return [
+        { label: 'IP', value: data.ip },
+        { label: 'City', value: data.city },
+        { label: 'Region', value: data.region },
+        { label: 'Country', value: data.country },
+        { label: 'Location', value: data.loc },
+        { label: 'Org', value: data.org },
+        { label: 'Timezone', value: data.timezone },
+    ];
+    }, [data]);
+
   const handleSearch = () => {
     if(!isValidIP(searchIP)) {
       setError('Invalid IP address.');
@@ -37,7 +50,6 @@ export default function Home() {
     setSearchIP('');
     setCurrentIP('');
     setError('');
-    setHistory([]);
   };
 
     return (
@@ -72,13 +84,9 @@ export default function Home() {
             <Card>
                 <h2 className="text-xl font-bold">Geolocation Info</h2>
                 <ul className="mt-2 space-y-1 text-sm">
-                <li><strong>IP:</strong> {data.ip}</li>
-                <li><strong>City:</strong> {data.city}</li>
-                <li><strong>Region:</strong> {data.region}</li>
-                <li><strong>Country:</strong> {data.country}</li>
-                <li><strong>Location:</strong> {data.loc}</li>
-                <li><strong>Org:</strong> {data.org}</li>
-                <li><strong>Timezone:</strong> {data.timezone}</li>
+                    {formattedGeo?.map((item, index) => (
+                        <li key={index}><strong>{item.label}:</strong> {item.value}</li>
+                    ))}
                 </ul>
             </Card>
             )}
