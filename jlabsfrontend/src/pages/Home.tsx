@@ -1,6 +1,13 @@
 import { useAuth } from '../hooks/useAuth';
 import { useState } from 'react';
 import { useGeo } from '../hooks/useGeo';
+import {
+  Button,
+  Card,
+  TextInput,
+  Alert,
+} from 'flowbite-react';
+import { HiInformationCircle } from 'react-icons/hi';
 
 const isValidIP = (ip: string) =>
   /^(?!0)(?!.*\.$)((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ip);
@@ -30,37 +37,41 @@ export default function Home() {
     setSearchIP('');
     setCurrentIP('');
     setError('');
+    setHistory([]);
   };
 
-  return (
-    <div className="max-w-xl mx-auto p-4 space-y-6">
-        <h1>Welcome {user?.name}</h1>
-        <div className="flex gap-2 items-center">
-            <input
-            type="text"
-            className="form-input px-3 py-2 border rounded w-full"
-            placeholder="Enter IP address..."
-            value={searchIP}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchIP(e.target.value)}
+    return (
+        <div className="max-w-xl mx-auto p-4 space-y-6">
+            <h1 className="text-2xl font-semibold">Welcome {user?.name}</h1>
+
+            <div className="flex gap-2 items-center">
+            <TextInput
+                type="text"
+                placeholder="Enter IP address..."
+                value={searchIP}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchIP(e.target.value)}
+                className="w-full"
             />
-            <button className="btn btn-primary" onClick={handleSearch}>
-            Search
-            </button>
-            <button className="btn btn-secondary" onClick={handleClear}>
-            Clear
-            </button>
-        </div>
+            <Button className='cursor-pointer' onClick={handleSearch}>Search</Button>
+            <Button className='cursor-pointer' color="gray" onClick={handleClear}>Clear</Button>
+            </div>
 
-        {error && <p className="text-red-500">{error}</p>}
+            {error && (
+            <Alert color="failure" icon={HiInformationCircle}>
+                {error}
+            </Alert>
+            )}
 
-        {isLoading ? (
+            {isLoading ? (
             <p>Loading geolocation...</p>
-        ) : isError ? (
-            <p className="text-red-500">Failed to fetch geolocation.</p>
-        ) : (
-            <div className="bg-white p-4 rounded shadow">
-            <h2 className="text-xl font-bold">Geolocation Info</h2>
-            <ul className="mt-2 space-y-1">
+            ) : isError ? (
+            <Alert color="failure" icon={HiInformationCircle}>
+                Failed to fetch geolocation.
+            </Alert>
+            ) : (
+            <Card>
+                <h2 className="text-xl font-bold">Geolocation Info</h2>
+                <ul className="mt-2 space-y-1 text-sm">
                 <li><strong>IP:</strong> {data.ip}</li>
                 <li><strong>City:</strong> {data.city}</li>
                 <li><strong>Region:</strong> {data.region}</li>
@@ -68,21 +79,22 @@ export default function Home() {
                 <li><strong>Location:</strong> {data.loc}</li>
                 <li><strong>Org:</strong> {data.org}</li>
                 <li><strong>Timezone:</strong> {data.timezone}</li>
-            </ul>
-            </div>
-        )}
+                </ul>
+            </Card>
+            )}
 
-        {history.length > 0 && (
-            <div className="bg-white p-4 rounded shadow">
-            <h2 className="text-lg font-semibold mb-2">Search History</h2>
-            <ul className="list-disc list-inside">
+            {history.length > 0 && (
+            <Card>
+                <h2 className="text-lg font-semibold mb-2">Search History</h2>
+                <ul className="list-disc list-inside text-sm">
                 {history.map((ip, index) => (
-                <li key={index} className="text-sm">{ip}</li>
+                    <li key={index}>{ip}</li>
                 ))}
-            </ul>
-            </div>
-        )}
-        <button className="text-blue-500 underline" onClick={logout}>Logout</button>
-    </div>    
-  );
+                </ul>
+            </Card>
+            )}
+
+            <Button className='cursor-pointer' color="red" onClick={logout}>Logout</Button>
+        </div>
+    );
 }

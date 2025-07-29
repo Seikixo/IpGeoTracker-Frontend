@@ -23,10 +23,11 @@ export default function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center">
       <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
         <h2 className="text-2xl font-semibold text-center">Login</h2>
         {error && <p className="text-red-500 text-sm">{error}</p>}
+
         <div>
           <Label htmlFor="email">Email</Label>
           <TextInput id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
@@ -35,7 +36,7 @@ export default function Login() {
           <Label htmlFor="password">Password</Label>
           <TextInput id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
-        <Button type="submit" className="w-full">Login</Button>
+        <Button type="submit" className="w-full cursor-pointer mt-14">Login</Button>
       </form>
     </div>
   );
