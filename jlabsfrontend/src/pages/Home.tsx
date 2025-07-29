@@ -8,6 +8,7 @@ import {
   Alert,
 } from 'flowbite-react';
 import { HiInformationCircle } from 'react-icons/hi';
+import GeoMap from '../components/GeoMap';
 
 const isValidIP = (ip: string) =>
   /^(?!0)(?!.*\.$)((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ip);
@@ -101,6 +102,18 @@ export default function Home() {
                 </ul>
             </Card>
             )}
+
+            {data?.loc && (
+            <Card>
+                <h2 className="text-lg font-semibold mb-2">Map Location</h2>
+                <GeoMap
+                location={data.loc}
+                city={data.city}
+                region={data.region}
+                country={data.country}
+                />
+            </Card>
+            )}            
 
             <Button className='cursor-pointer' color="red" onClick={logout}>Logout</Button>
         </div>
