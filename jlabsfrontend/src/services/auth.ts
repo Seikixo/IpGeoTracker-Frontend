@@ -10,7 +10,6 @@ export const logout = async () => {
   try {
     await axiosInstance.post('/logout');
   } catch (error) {
-    // Even if API call fails, we still want to clear local data
     console.warn('Logout API call failed, but clearing local data');
   }
 };

@@ -2,10 +2,12 @@
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { fetchUser, login as loginApi, logout as logoutApi } from '../services/auth';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const useAuth = () => {
   const queryClient = useQueryClient();
   const [token, setToken] = useState(() => localStorage.getItem('token'));
+  const navigate = useNavigate();
 
   const { data: user, isLoading } = useQuery({
     queryKey: ['auth-user'],
@@ -28,7 +30,6 @@ export const useAuth = () => {
   const logoutMutation = useMutation({
     mutationFn: logoutApi,
     onSettled: () => {
-      // Always clear local data, even if API call fails
       localStorage.removeItem('token');
       setToken(null);
       queryClient.clear();
@@ -40,7 +41,11 @@ export const useAuth = () => {
   };
 
   const logout = () => {
-    logoutMutation.mutate();
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        navigate('/login') 
+      },
+    });
   };
 
   return {
