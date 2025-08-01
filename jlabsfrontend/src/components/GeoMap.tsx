@@ -5,6 +5,8 @@ import 'leaflet/dist/leaflet.css';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import { useGeoMap } from '../hooks/useGeoMapContext';
+import React from 'react';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -13,14 +15,9 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-interface GeoMapProps {
-  location: string; // e.g. "14.5995,120.9842"
-  city?: string;
-  region?: string;
-  country?: string;
-}
 
-export default function GeoMap({ location, city, region, country }: GeoMapProps) {
+function GeoMap() {
+  const { location, city, region, country } = useGeoMap();
   const coords = location.split(',').map(Number) as [number, number];
 
   return (
@@ -42,3 +39,5 @@ export default function GeoMap({ location, city, region, country }: GeoMapProps)
     </MapContainer>
   );
 }
+
+export default React.memo(GeoMap);

@@ -4,19 +4,16 @@ import { useGeo } from '../hooks/useGeo';
 import {
   Button,
   Card,
-  TextInput,
   Alert,
 } from 'flowbite-react';
 import { HiInformationCircle } from 'react-icons/hi';
 import GeoMap from '../components/GeoMap';
-
-const isValidIP = (ip: string) =>
-  /^(?!0)(?!.*\.$)((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ip);
+import { GeoMapContext } from '../hooks/useGeoMapContext';
+import SearchForm from '../components/SearchForm';
 
 
 export default function Home() {
   const { user, logout } = useAuth();
-  const [searchIP, setSearchIP] = useState('');
   const [currentIP, setCurrentIP] = useState<string | null>(''); 
   const [history, setHistory] = useState<string[]>([]);
   const [error, setError] = useState('');
@@ -36,37 +33,33 @@ export default function Home() {
     ];
     }, [data]);
 
-  const handleSearch = () => {
-    if(!isValidIP(searchIP)) {
-      setError('Invalid IP address.');
-      return;        
-    }
+    const geoContextValue = useMemo(() => {
+      if (!data) return null;
 
-    setCurrentIP(searchIP);
-    setHistory((prev) => [...new Set([searchIP, ...prev])]);
-    setError('');
-  }
-
-  const handleClear = () => {
-    setSearchIP('');
-    setCurrentIP('');
-    setError('');
-  };
+      return {
+        location: data.loc,
+        city: data.city,
+        region: data.region,
+        country: data.country,
+      };
+    }, [data]);
 
     return (
         <div className="max-w-xl mx-auto p-4 space-y-6">
             <h1 className="text-2xl font-semibold">Welcome {user?.name}</h1>
 
             <div className="flex gap-2 items-center">
-            <TextInput
-                type="text"
-                placeholder="Enter IP address..."
-                value={searchIP}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchIP(e.target.value)}
-                className="w-full"
+            <SearchForm
+              onSearch={(ip) => {
+                setCurrentIP(ip);
+                setHistory((prev) => [...new Set([ip, ...prev])]);
+                setError('');
+              }}
+              onClear={() => {
+                setCurrentIP('');
+                setError('');
+              }}
             />
-            <Button className='cursor-pointer' onClick={handleSearch}>Search</Button>
-            <Button className='cursor-pointer' color="gray" onClick={handleClear}>Clear</Button>
             </div>
 
             {error && (
@@ -103,17 +96,14 @@ export default function Home() {
             </Card>
             )}
 
-            {data?.loc && (
-            <Card>
+            {geoContextValue && (
+              <Card>
                 <h2 className="text-lg font-semibold mb-2">Map Location</h2>
-                <GeoMap
-                location={data.loc}
-                city={data.city}
-                region={data.region}
-                country={data.country}
-                />
-            </Card>
-            )}            
+                <GeoMapContext.Provider value={geoContextValue}>
+                  <GeoMap />
+                </GeoMapContext.Provider>
+              </Card>
+            )}         
 
             <Button className='cursor-pointer' color="red" onClick={logout}>Logout</Button>
         </div>
