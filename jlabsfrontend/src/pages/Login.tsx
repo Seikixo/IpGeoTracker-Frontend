@@ -1,7 +1,7 @@
 // src/pages/Login.tsx
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Label, TextInput, Button } from 'flowbite-react';
 
 export default function Login() {
@@ -36,6 +36,12 @@ export default function Login() {
           <Label htmlFor="password">Password</Label>
           <TextInput id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
+          <Link
+            to="/register"
+            className="text-blue-400 font-semibold underline"
+          >
+            Register
+          </Link>
         <Button type="submit" className="w-full cursor-pointer mt-14">Login</Button>
       </form>
     </div>

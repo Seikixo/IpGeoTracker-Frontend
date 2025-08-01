@@ -16,7 +16,6 @@ export default function Home() {
   const { user, logout } = useAuth();
   const [currentIP, setCurrentIP] = useState<string | null>(''); 
   const [history, setHistory] = useState<string[]>([]);
-  const [error, setError] = useState('');
 
   const { data, isLoading, isError } = useGeo(currentIP);
 
@@ -46,27 +45,22 @@ export default function Home() {
 
     return (
         <div className="max-w-xl mx-auto p-4 space-y-6">
-            <h1 className="text-2xl font-semibold">Welcome {user?.name}</h1>
-
+            <div className='w-full flex justify-between'>
+              <h1 className="text-2xl font-semibold">Welcome {user?.name}</h1>
+              <Button className='cursor-pointer' color="red" onClick={logout}>Logout</Button>
+            </div>
+            
             <div className="flex gap-2 items-center">
             <SearchForm
               onSearch={(ip) => {
                 setCurrentIP(ip);
                 setHistory((prev) => [...new Set([ip, ...prev])]);
-                setError('');
               }}
               onClear={() => {
                 setCurrentIP('');
-                setError('');
               }}
             />
             </div>
-
-            {error && (
-            <Alert color="failure" icon={HiInformationCircle}>
-                {error}
-            </Alert>
-            )}
 
             {isLoading ? (
             <p>Loading geolocation...</p>
@@ -104,8 +98,6 @@ export default function Home() {
                 </GeoMapContext.Provider>
               </Card>
             )}         
-
-            <Button className='cursor-pointer' color="red" onClick={logout}>Logout</Button>
         </div>
     );
 }

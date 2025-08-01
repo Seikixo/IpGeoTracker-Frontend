@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button, TextInput } from 'flowbite-react';
+import { Alert, Button, TextInput } from 'flowbite-react';
+import { HiInformationCircle } from 'react-icons/hi';
 
 type Props = {
   onSearch: (ip: string) => void;
@@ -11,10 +12,11 @@ const isValidIP = (ip: string) =>
 
 const SearchForm = ({ onSearch, onClear }: Props) => {
   const [searchIP, setSearchIP] = useState('');
+  const [error, setError] = useState('');
 
   const handleSearch = () => {
     if (!isValidIP(searchIP)) {
-      alert('Invalid IP');
+      setError('Invalid IP Address');
       return;
     }
     onSearch(searchIP);
@@ -23,21 +25,31 @@ const SearchForm = ({ onSearch, onClear }: Props) => {
 
   const handleClear = () => {
     setSearchIP(''); 
-    onClear();        
+    onClear();
+    setError('');        
   };
 
 
   return (
-    <div className="flex gap-2 items-center">
-      <TextInput
-        type="text"
-        placeholder="Enter IP address..."
-        value={searchIP}
-        onChange={(e) => setSearchIP(e.target.value)}
-        className="w-full"
-      />
-      <Button onClick={handleSearch}>Search</Button>
-      <Button color="gray" onClick={handleClear}>Clear</Button>
+    <div className="flex gap-2 items-start flex-col w-full">
+      <div className='flex'>
+        <TextInput
+          type="text"
+          placeholder="Enter IP address..."
+          value={searchIP}
+          onChange={(e) => setSearchIP(e.target.value)}
+          className="w-full mr-2"
+        />
+        <Button onClick={handleSearch} className='mr-1'>Search</Button>
+        <Button color="gray" onClick={handleClear}>Clear</Button>
+      </div>
+      <div className='flex w-full'>
+        {error && (
+          <Alert className='flex w-full' color="failure" icon={HiInformationCircle}>
+            {error}
+          </Alert>
+        )}
+      </div>
     </div>
   );
 };
