@@ -10,6 +10,7 @@ import { HiInformationCircle } from 'react-icons/hi';
 import GeoMap from '../components/GeoMap';
 import { GeoMapContext } from '../hooks/useGeoMapContext';
 import SearchForm from '../components/SearchForm';
+import GeoInfo from '../components/GeoInfo';
 
 
 export default function Home() {
@@ -69,14 +70,7 @@ export default function Home() {
                 Failed to fetch geolocation.
             </Alert>
             ) : (
-            <Card>
-                <h2 className="text-xl font-bold">Geolocation Info</h2>
-                <ul className="mt-2 space-y-1 text-sm">
-                    {formattedGeo?.map((item, index) => (
-                        <li key={index}><strong>{item.label}:</strong> {item.value}</li>
-                    ))}
-                </ul>
-            </Card>
+              <GeoInfo formattedGeo={formattedGeo}/>
             )}
 
             {history.length > 0 && (
